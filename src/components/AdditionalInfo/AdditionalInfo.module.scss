@@ -1,0 +1,15 @@
+.menu {
+  display: flex;
+}
+
+.NavLink {
+  margin-left: 10px;
+  font-size: 20px;
+  color: indigo;
+  text-decoration: none;
+
+  &__active {
+    color: red;
+    border-bottom: 2px solid red;
+  }
+}
