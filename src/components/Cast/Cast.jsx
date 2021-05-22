@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
+import axios from 'axios';
 import Loader from 'react-loader-spinner';
 
 import apiServices from '../../api/api-services';
@@ -13,13 +13,27 @@ export default function Cast() {
   const { movieId } = useParams();
 
   useEffect(() => {
+    const source = axios.CancelToken.source();
+    const cancelKey = {
+      cancelToken: source.token,
+    };
     setIsLoading(true);
 
     apiServices
-      .fetchCredits(movieId)
+      .fetchCredits(movieId, cancelKey)
       .then(cast => setActor(cast))
-      .catch(error => setError(error.message))
+      .catch(error => {
+        if (axios.isCancel(error)) {
+          console.log('Operation on page "Cast" canceled by the user.');
+        } else {
+          setError(error.message);
+        }
+      })
       .finally(() => setIsLoading(false));
+
+    return () => {
+      source.cancel();
+    };
   }, [movieId]);
 
   return (
